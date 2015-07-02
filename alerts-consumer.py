@@ -12,6 +12,8 @@ bus_service = ServiceBusService(
     shared_access_key_name='RootManageSharedAccessKey',
     shared_access_key_value=ns_key)
 
+alerts = firebase.get('/account/simplelogin:2/alerts', None)
+alertCount =  len(alerts)
 while True:
     msg = bus_service.receive_subscription_message('onroad-alerts', 'alerts-consumer', peek_lock=False)
     if msg.body:
@@ -23,4 +25,5 @@ while True:
         #TODO: Remove device number hard coding
         new_alert = {'alertid': str(uuid.uuid1()), 'alerttype': alert['alert'], 'devicenumber': '8650670123456', 'latitude': alert_location['latitude'], 'longitude': alert_location['longitude'], 'status':'Open', 'time': alert_location['locationtime']}
         print new_alert
-        firebase.post('/account/simplelogin:2/alerts', new_alert)
+        alertCount = alertCount + 1
+        firebase.patch('/account/simplelogin:2/alerts/' + str(alertCount), new_alert)
