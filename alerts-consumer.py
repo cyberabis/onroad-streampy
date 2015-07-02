@@ -13,7 +13,7 @@ bus_service = ServiceBusService(
     shared_access_key_value=ns_key)
 
 alerts = firebase.get('/account/simplelogin:2/alerts', None)
-alertCount =  len(alerts)
+alertCount =  len(alerts) - 1
 while True:
     msg = bus_service.receive_subscription_message('onroad-alerts', 'alerts-consumer', peek_lock=False)
     if msg.body:
